@@ -1,7 +1,11 @@
 package com.chatapp.vartalaab.repository;
+import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.stereotype.Repository;
+
 import com.chatapp.vartalaab.entity.User;
 
+@Repository
+public interface UserRepository extends MongoRepository<User, String> {
 
-public interface UserRepository{
-    User findUserByUsername(String username);
+    boolean existsByUsername(String username);
 }
