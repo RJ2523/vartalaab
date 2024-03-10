@@ -21,7 +21,14 @@ import io.jsonwebtoken.security.Keys;
 public class JwtService {
 
     @Value("${jwt.secret}")
-    public String jwtSecret;
+    private String jwtSecret;
+
+    @Value("${jwt.token.expire.time}")
+    private long jwtTokenExpiration;
+
+    @Value("${jwt.token.refresh.threshold}")
+    private long jwtTokenRefreshThreshold;
+
 
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
@@ -36,6 +43,7 @@ public class JwtService {
         return claimsResolver.apply(claims);
     }
 
+    @SuppressWarnings("deprecation")
     private Claims extractAllClaims(String token) {
         return Jwts
                 .parserBuilder()
@@ -54,21 +62,36 @@ public class JwtService {
         return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
     }
 
-
-
     public String generateToken(String username){
         Map<String, Object> claims = new HashMap<>();
         return createToken(claims, username);
     }
 
+    public boolean shouldRefreshToken(String token) {
+        Date expiration = extractExpiration(token);
+        return expiration.getTime() - System.currentTimeMillis() < jwtTokenRefreshThreshold;
+    }
 
+    public String refreshToken(String token) {
+        Claims claims = extractAllClaims(token);
+        String username = extractUsername(token);
+        Date now = new Date();
+        Date expiryDate = new Date(now.getTime() + jwtTokenExpiration);
+
+        return Jwts.builder()
+        .setClaims(claims)
+        .setSubject(username)
+        .setIssuedAt(now)
+        .setExpiration(expiryDate)
+        .signWith(SignatureAlgorithm.HS256, jwtSecret.getBytes(Charset.forName("UTF-8"))).compact();
+    }
 
     private String createToken(Map<String, Object> claims, String username) {
         return Jwts.builder()
                 .setClaims(claims)
                 .setSubject(username)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis()+1000*60*1))
+                .setExpiration(new Date(System.currentTimeMillis()+jwtTokenExpiration))
                 .signWith(SignatureAlgorithm.HS256, jwtSecret.getBytes(Charset.forName("UTF-8"))).compact();
     }
 

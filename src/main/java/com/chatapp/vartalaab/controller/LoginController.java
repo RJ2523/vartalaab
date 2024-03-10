@@ -24,6 +24,7 @@ public class LoginController{
 
     @Autowired
     private JwtService jwtService;
+    
     @PostMapping("/auth/login")
     public ResponseEntity<?> doLogin(@RequestBody AuthRequest authRequest){
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authRequest.getUsername(),authRequest.getPassword()));
