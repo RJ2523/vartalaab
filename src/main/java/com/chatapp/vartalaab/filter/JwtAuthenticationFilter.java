@@ -19,13 +19,21 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 @Component
-public class JwtAuthenticationFilter extends OncePerRequestFilter {
+public class JwtAuthenticationFilter extends OncePerRequestFilter{
 
     @Autowired
     private JwtService jwtService;
 
     @Autowired
     private UserService userService;
+
+
+    //skipping JwtAuthenticationFilter in case of Login and Signup("/auth/login", "/auth/signUp")
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+        String pathUrl = request.getServletPath();
+        return pathUrl.startsWith("/auth");
+	}
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
