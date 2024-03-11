@@ -1,17 +1,12 @@
 package com.chatapp.vartalaab.controller;
 
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-
-import com.chatapp.vartalaab.entity.User;
 import com.chatapp.vartalaab.model.UserModel;
-import com.chatapp.vartalaab.repository.UserRepository;
 import com.chatapp.vartalaab.service.JwtService;
 import com.chatapp.vartalaab.service.UserService;
 import com.chatapp.vartalaab.wrapper.UserSignUpWrapper;

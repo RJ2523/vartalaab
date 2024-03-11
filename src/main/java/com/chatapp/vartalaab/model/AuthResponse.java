@@ -8,7 +8,4 @@ import lombok.Data;
 public class AuthResponse implements Serializable {
     private String jwtToken;
 
-    public AuthResponse(String jwtToken){
-        this.jwtToken = jwtToken;
-    }
 }

@@ -11,6 +11,7 @@ import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -31,6 +32,9 @@ public class securityConfiguration{
     @Autowired
     private JwtAuthenticationFilter jwtAuthenticationFilter;
 
+    @Autowired
+    private CustomLogoutHandler logoutHandler;
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception{
         return httpSecurity.csrf((csrf)->csrf.disable())
@@ -42,6 +46,9 @@ public class securityConfiguration{
                 }).sessionManagement((session) -> {
                     session.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
                 }).addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+                .logout(l->l.logoutUrl("/logout")
+                        .addLogoutHandler(logoutHandler)
+                        .logoutSuccessHandler((req, res, auth) -> SecurityContextHolder.clearContext()))
                 .build();
     }
 
