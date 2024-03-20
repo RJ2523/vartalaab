@@ -11,8 +11,8 @@ import java.nio.charset.Charset;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
-import com.chatapp.vartalaab.redisEntity.UserTokenEntity;
-import com.chatapp.vartalaab.repository.UserTokenRepository;
+
+import com.chatapp.vartalaab.redisEntity.UserSessionDetails;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -23,7 +23,7 @@ import io.jsonwebtoken.security.Keys;
 @Service
 public class JwtService {
 
-    private UserTokenRepository userTokenRepository;
+    private UserSessionService userSessionService;
 
     @Value("${jwt.secret}")
     private String jwtSecret;
@@ -34,8 +34,8 @@ public class JwtService {
     @Value("${jwt.token.refresh.threshold}")
     private long jwtTokenRefreshThreshold;
 
-    public JwtService(UserTokenRepository userTokenRepository){
-        this.userTokenRepository = userTokenRepository;
+    public JwtService(UserSessionService userSessionService){
+        this.userSessionService = userSessionService;
     }
 
 
@@ -69,10 +69,9 @@ public class JwtService {
     public Boolean validateToken(String token, UserDetails userDetails){
         final String username = extractUsername(token);
         //checking if the token is not blackListed
-        UserTokenEntity userTokenEntity = 
-            userTokenRepository.findById(token).
-            orElseThrow(()-> new NoSuchElementException());
-        return (username.equals(userDetails.getUsername()) && !isTokenExpired(token) && !userTokenEntity.isLoggedOut());
+        UserSessionDetails userSessionDetails = userSessionService.getUserSessionDetails(username)
+                                                .orElseThrow(()-> new NoSuchElementException());
+        return (username.equals(userDetails.getUsername()) && !isTokenExpired(token) && !userSessionDetails.isLoggedOut(token));
     }
 
     public String generateToken(String username){
