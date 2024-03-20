@@ -12,7 +12,7 @@ import com.chatapp.vartalaab.service.UserService;
 import com.chatapp.vartalaab.wrapper.UserSignUpWrapper;
 
 @RestController
-public class UserController {
+public class SignUpController {
     
     @Autowired
     private JwtService jwtService;

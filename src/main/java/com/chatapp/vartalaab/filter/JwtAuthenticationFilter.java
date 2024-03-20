@@ -3,6 +3,8 @@ package com.chatapp.vartalaab.filter;
 import java.io.IOException;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.security.oauth2.resource.OAuth2ResourceServerProperties.Jwt;
+import org.springframework.core.Ordered;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -19,20 +21,28 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 @Component
-public class JwtAuthenticationFilter extends OncePerRequestFilter{
+public class JwtAuthenticationFilter extends OncePerRequestFilter implements Ordered{
 
-    @Autowired
     private JwtService jwtService;
 
-    @Autowired
     private UserService userService;
 
+    public JwtAuthenticationFilter(JwtService jwtService, UserService userService){
+        this.jwtService = jwtService;
+        this.userService = userService;
+    }
+
+
+    @Override
+    public int getOrder() {
+        return Ordered.HIGHEST_PRECEDENCE;
+    }
 
     //skipping JwtAuthenticationFilter in case of Login and Signup("/auth/login", "/auth/signUp")
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
         String pathUrl = request.getServletPath();
-        return pathUrl.startsWith("/auth");
+        return pathUrl.startsWith("/auth/login");
 	}
 
     @Override
@@ -51,6 +61,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter{
                 UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
                 authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+            }else if(request.getServletPath().startsWith("/logout")){
+                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Access Denied");
+                return;
             }
         }
         filterChain.doFilter(request, response);
