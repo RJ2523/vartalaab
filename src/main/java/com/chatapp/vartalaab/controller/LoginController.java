@@ -65,7 +65,7 @@ public class LoginController{
                 userSessionDetails = new UserSessionDetails(authRequest.getUsername()+GeneralUtility.SESSION_APPENDER, 1 , new HashMap<>(){{put(jwtToken, false);}});
                 userSessionService.saveUserSessionDetails(userSessionDetails);
             }
-            log.info("user : {} is logged in {} devices", authRequest.getUsername(), userSessionDetails.getActiveSessions());
+            log.info("user : {} is logged in {} device(s)", authRequest.getUsername(), userSessionDetails.getActiveSessions());
             return ResponseEntity.ok()
             .header(HttpHeaders.AUTHORIZATION, jwtToken)
             .build();
