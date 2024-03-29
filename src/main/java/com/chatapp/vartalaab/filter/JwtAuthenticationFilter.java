@@ -56,9 +56,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter{
                 SecurityContext context = SecurityContextHolder.createEmptyContext();
                 context.setAuthentication(authenticationToken);
                 SecurityContextHolder.setContext(context);
-            }else if(request.getServletPath().startsWith("/logout")){
-                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Access Denied");
-                return;
             }
         }
         filterChain.doFilter(request, response);
