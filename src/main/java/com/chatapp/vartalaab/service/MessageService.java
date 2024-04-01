@@ -67,6 +67,7 @@ public class MessageService {
     public void forwardTheMessageToReceiver(String messageReceiver, TextMessage message) throws IOException {
         for(String webSocketSessionId: userSessionService.getUserWebSocketSessionIds(messageReceiver)){
             sessionMap.get(webSocketSessionId).sendMessage(message);
+            //Todo: save msg to MongoDB
         }
     }
 }

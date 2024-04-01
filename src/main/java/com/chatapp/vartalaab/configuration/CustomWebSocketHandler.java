@@ -36,6 +36,7 @@ public class CustomWebSocketHandler extends TextWebSocketHandler {
         String username = session.getPrincipal().getName();
         messageDto.setSender(username);
         //ACK for message sent
+        //todo: enhance ACK messages and add concurrent msg support
         session.sendMessage(new TextMessage(GeneralUtility.AckForSent));
         //check if receiver is online
         String messageReceiver = messageDto.getReceiver();
@@ -60,6 +61,7 @@ public class CustomWebSocketHandler extends TextWebSocketHandler {
         List<String> messages = messageService.getMessagesFromCache(username);
         for(String message: messages){
             session.sendMessage(new TextMessage(message));
+            //Todo: save msg to MongoDB
         }
     }
 
