@@ -21,7 +21,7 @@ import com.chatapp.vartalaab.filter.JwtAuthenticationFilter;
 import com.chatapp.vartalaab.service.UserService;
 
 @Configuration
-public class securityConfiguration{
+public class SecurityConfiguration {
 
     @Value("{$jwt.secret}")
     private String jwtSecret;
