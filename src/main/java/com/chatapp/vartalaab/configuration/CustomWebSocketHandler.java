@@ -37,13 +37,13 @@ public class CustomWebSocketHandler extends TextWebSocketHandler {
         messageDto.setSender(username);
         //ACK for message sent
         //todo: enhance ACK messages and add concurrent msg support
-        session.sendMessage(new TextMessage(GeneralUtility.AckForSent));
+        session.sendMessage(new TextMessage(GeneralUtility.ACK_FOR_SENT));
         //check if receiver is online
         String messageReceiver = messageDto.getReceiver();
-        if(userSessionService.checkIfUserIsOnline(messageReceiver)){
-            messageService.forwardTheMessageToReceiver(messageReceiver, message);
+        if(userSessionService.IsUserOnline(messageReceiver)){
+            messageService.sendMessageToRecipient(messageReceiver, message);
             //ACK for message received
-            session.sendMessage(new TextMessage(GeneralUtility.AckForReceived));
+            session.sendMessage(new TextMessage(GeneralUtility.ACK_FOR_RECEIVED));
         }
         else{
             messageService.saveMessagesToCache(messageDto);

@@ -1,5 +1,6 @@
 package com.chatapp.vartalaab.service;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,9 +27,9 @@ public class UserSessionService {
         return userSessionRepository.findById(username  + GeneralUtility.SESSION_APPENDER);
     }
 
-    public void updateUserWebSocketSessionDetails(String username, String sessionId, boolean shouldAdd){
+    public void updateUserWebSocketSessionDetails(String username, String sessionId, boolean isOnline){
         Optional<UserSessionDetails> userSession = this.getUserSessionDetails(username);
-        if(shouldAdd){
+        if(isOnline){
             userSession.get().getWebSocketSessionIds().add(sessionId);
         }
         else{
@@ -37,13 +38,16 @@ public class UserSessionService {
         userSessionRepository.save(userSession.get());
     }
 
-    public boolean checkIfUserIsOnline(String username){
+    public boolean IsUserOnline(String username){
         Optional<UserSessionDetails> userSessOptional =  this.getUserSessionDetails(username);
         return userSessOptional.isPresent() && userSessOptional.get().getActiveSessions() > 0;
     }
 
     public List<String> getUserWebSocketSessionIds(String username){
         Optional<UserSessionDetails> userSessOptional =  this.getUserSessionDetails(username);
-        return userSessOptional.get().getWebSocketSessionIds();
+        if(userSessOptional.isPresent()) {
+            return userSessOptional.get().getWebSocketSessionIds();
+        }
+        return Collections.emptyList();
     }
 }
