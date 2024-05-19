@@ -41,7 +41,7 @@ public class CustomWebSocketHandler extends TextWebSocketHandler {
         //check if receiver is online
         String messageReceiver = messageDto.getReceiver();
         if(userSessionService.checkIfUserIsOnline(messageReceiver)){
-            messageService.forwardTheMessageToReceiver(messageReceiver, message);
+            messageService.forwardTheMessageToReceiver(messageReceiver, message, true);
             //ACK for message received
             session.sendMessage(new TextMessage(GeneralUtility.AckForReceived));
         }
