@@ -37,13 +37,13 @@ public class CustomWebSocketHandler extends TextWebSocketHandler {
         messageDto.setSender(username);
         //ACK for message sent
         //todo: enhance ACK messages and add concurrent msg support
-        session.sendMessage(new TextMessage(GeneralUtility.AckForSent));
+        session.sendMessage(new TextMessage(GeneralUtility.ACK_FOR_SENT));
         //check if receiver is online
         String messageReceiver = messageDto.getReceiver();
-        if(userSessionService.checkIfUserIsOnline(messageReceiver)){
-            messageService.forwardTheMessageToReceiver(messageReceiver, message, true);
+        if(userSessionService.IsUserOnline(messageReceiver)){
+            messageService.sendMessageToRecipient(messageReceiver, message, true);
             //ACK for message received
-            session.sendMessage(new TextMessage(GeneralUtility.AckForReceived));
+            session.sendMessage(new TextMessage(GeneralUtility.ACK_FOR_RECEIVED));
         }
         else{
             messageService.saveMessagesToCache(messageDto);
@@ -60,8 +60,9 @@ public class CustomWebSocketHandler extends TextWebSocketHandler {
         //process the messages stored in redis during client's offline period
         List<String> messages = messageService.getMessagesFromCache(username);
         for(String message: messages){
-            session.sendMessage(new TextMessage(message));
-            //Todo: save msg to MongoDB
+            TextMessage textMessage = new TextMessage(message);
+            session.sendMessage(textMessage);
+            messageService.saveMessagesToDB(textMessage);
         }
     }
 

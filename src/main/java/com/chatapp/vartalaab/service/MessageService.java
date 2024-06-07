@@ -57,12 +57,15 @@ public class MessageService {
         if(offlineMessageIds.isPresent()) {
             List<String> messageIds = offlineMessageIds.get().getMessageIds();
             for (String messageId : messageIds) {
-                MessageEntity message = messageRepository.findById(messageId).orElseThrow(() -> new NoSuchElementException());
-                MessageDto messageDto = new MessageDto(message.getSender(), message.getMessage(), message.getTimestamp());
-                messages.add(messageDto.toString()); //returning JSON message in text format
-                this.forwardTheMessageToReceiver(messageDto.getSender(), new TextMessage(GeneralUtility.AckForReceived), false);
-                messageRepository.deleteById(messageId);
+                Optional<MessageEntity> message = messageRepository.findById(messageId);
+                if(message.isPresent()) {
+                    MessageDto messageDto = new MessageDto(message.get().getSender(), message.get().getMessage(), message.get().getTimestamp());
+                    messages.add(messageDto.toString()); //returning JSON message in text format
+                    this.sendMessageToRecipient(messageDto.getSender(), new TextMessage(GeneralUtility.ACK_FOR_RECEIVED), false);
+                    messageRepository.deleteById(messageId);
+                }
             }
+            offlineMessageIdsRepository.deleteById(username);
         }
         return messages;
     }
@@ -79,7 +82,7 @@ public class MessageService {
         offlineMessageIdsRepository.save(tempOfileMessageIds);
     }
 
-    public void forwardTheMessageToReceiver(String messageReceiver, TextMessage message, boolean isAck) throws IOException {
+    public void sendMessageToRecipient(String messageReceiver, TextMessage message, boolean isAck) throws IOException {
         for(String webSocketSessionId: userSessionService.getUserWebSocketSessionIds(messageReceiver)){
             sessionMap.get(webSocketSessionId).sendMessage(message);
         }

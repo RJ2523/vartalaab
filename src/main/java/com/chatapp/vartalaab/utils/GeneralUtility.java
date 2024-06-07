@@ -4,9 +4,9 @@ public class GeneralUtility {
 
     public static String SESSION_APPENDER = "_session";
 
-    public static String AckForSent = "Sent";
+    public static String ACK_FOR_SENT = "Sent";
 
-    public static String AckForReceived = "Received";
+    public static String ACK_FOR_RECEIVED = "Received";
 
-    public static String AckForRead = "Read";
+    public static String ACK_FOR_READ = "Read";
 }
