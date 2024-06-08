@@ -2,8 +2,8 @@ package com.chatapp.vartalaab.filter;
 
 import java.io.IOException;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
@@ -21,11 +21,14 @@ import jakarta.servlet.http.HttpServletResponse;
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter{
 
-    @Autowired
     private JwtService jwtService;
 
-    @Autowired
     private UserService userService;
+
+    public JwtAuthenticationFilter(JwtService jwtService, UserService userService){
+        this.jwtService = jwtService;
+        this.userService = userService;
+    }
 
 
     //skipping JwtAuthenticationFilter in case of Login and Signup("/auth/login", "/auth/signUp")
@@ -50,7 +53,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter{
             if(jwtService.validateToken(token, userDetails)){
                 UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
                 authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+                SecurityContext context = SecurityContextHolder.createEmptyContext();
+                context.setAuthentication(authenticationToken);
+                SecurityContextHolder.setContext(context);
             }
         }
         filterChain.doFilter(request, response);

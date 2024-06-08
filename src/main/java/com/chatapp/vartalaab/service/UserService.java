@@ -2,9 +2,8 @@ package com.chatapp.vartalaab.service;
 
 import java.util.Optional;
 
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -20,13 +19,12 @@ import io.micrometer.common.util.StringUtils;
 
 
 @Service
+@Slf4j
 public class UserService implements UserDetailsService{
 
     private UserRepository userRepository;
 
     private ModelMapper modelMapper;
-
-    private Logger logger = LoggerFactory.getLogger(UserService.class);
 
     private static String USERNAME_IS_EMPTY = "please provide a valid username";
 
@@ -39,19 +37,19 @@ public class UserService implements UserDetailsService{
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        logger.debug(">> loadUserByUsername");
+        log.debug(">> loadUserByUsername");
         Optional<User> user = userRepository.findById(username);
         if(!user.isPresent()){
-            logger.debug(">> user does not exist");
+            log.debug(">> user does not exist");
             throw new UsernameNotFoundException(username);
         }
-        logger.debug("<< loadUserByUsername");
+        log.debug("<< loadUserByUsername");
         user.get().setRole("USER");
         return user.get();
     }
 
     public UserSignUpWrapper validateAndCreateUser(UserModel userModel){
-        logger.debug(">> validateAndCreateUser");
+        log.debug(">> validateAndCreateUser");
         UserSignUpWrapper userSignUpObj = new UserSignUpWrapper();
         userSignUpObj.setUserSignUpSuccessful(false);
         // does username already taken
@@ -67,7 +65,7 @@ public class UserService implements UserDetailsService{
         newUserDetails.setPassword(new BCryptPasswordEncoder().encode(userModel.getPassword()));
         userRepository.save(newUserDetails);
         userSignUpObj.setUserSignUpSuccessful(true);
-        logger.debug("<< validateAndCreateUser");
+        log.debug("<< validateAndCreateUser");
         return userSignUpObj;
     }
 
