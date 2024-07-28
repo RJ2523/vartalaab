@@ -11,6 +11,7 @@ public class MessageDto {
     private String receiver;
     private String message;
     private Date timestamp;
+    private String jwt=null;
 
     public MessageDto() {
     }

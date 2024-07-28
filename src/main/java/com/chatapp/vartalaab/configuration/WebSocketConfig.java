@@ -6,7 +6,6 @@ import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.config.annotation.EnableWebSocket;
 import org.springframework.web.socket.config.annotation.WebSocketConfigurer;
 import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry;
-import org.springframework.web.socket.server.support.HttpSessionHandshakeInterceptor;
 
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -16,12 +15,17 @@ public class WebSocketConfig implements WebSocketConfigurer {
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
         registry.addHandler(getCustomWebSocketHandler(), "/sendMessage")
-                .addInterceptors(new HttpSessionHandshakeInterceptor()).setAllowedOrigins("/*");
+                .addInterceptors(new CustomHandshakeInterceptor()).setAllowedOrigins("http://localhost:1234");
     }
 
     @Bean
     public ConcurrentHashMap<String, WebSocketSession> sessionMap(){
         return new ConcurrentHashMap<String, WebSocketSession>();
+    }
+
+    @Bean
+    public ConcurrentHashMap<String, String> sessionUsernameMap(){
+        return new ConcurrentHashMap<String, String>();
     }
 
     @Bean

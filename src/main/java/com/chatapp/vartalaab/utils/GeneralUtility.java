@@ -9,4 +9,6 @@ public class GeneralUtility {
     public static String ACK_FOR_RECEIVED = "Received";
 
     public static String ACK_FOR_READ = "Read";
+
+    public static String ACK_AUTHENTICATION = "Authenticated" ;
 }
