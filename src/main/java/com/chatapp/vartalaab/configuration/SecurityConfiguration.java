@@ -42,6 +42,7 @@ public class SecurityConfiguration {
                     req.requestMatchers("/test/**").permitAll();
                     req.requestMatchers(HttpMethod.POST,"/auth/login").permitAll();
                     req.requestMatchers("/auth/signUp").permitAll();
+                    req.requestMatchers("/sendMessage").permitAll();
                     req.anyRequest().authenticated();
                 }).sessionManagement((session) -> {
                     session.sessionCreationPolicy(SessionCreationPolicy.STATELESS);

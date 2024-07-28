@@ -35,7 +35,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter{
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
         String pathUrl = request.getServletPath();
-        return pathUrl.startsWith("/auth");
+        return pathUrl.startsWith("/auth") || pathUrl.startsWith("/sendMessage");
 	}
 
     @Override
