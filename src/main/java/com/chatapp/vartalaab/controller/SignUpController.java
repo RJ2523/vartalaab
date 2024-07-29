@@ -26,7 +26,7 @@ public class SignUpController {
         if(!userSignUpWrapper.isUserSignUpSuccessful())
             return new ResponseEntity<>(userSignUpWrapper.getIssue(), HttpStatus.CONFLICT);
 
-        return new ResponseEntity<>(jwtService.generateToken(userModel.getUsername()),
+        return new ResponseEntity<>(jwtService.generateToken(userModel.getUserName()),
                                                                          HttpStatus.CREATED);
     }
 }

@@ -45,6 +45,7 @@ public class LoginController{
         Authentication authentication = authenticationManager.
                                         authenticate(new UsernamePasswordAuthenticationToken(authRequest.getUsername(),
                                         authRequest.getPassword()));
+                                        
         if(!ObjectUtils.isEmpty(authentication) && authentication.isAuthenticated()){
             log.info("authentication successful for user: {}" , authRequest.getUsername());
             String jwtToken = jwtService.generateToken(authRequest.getUsername());

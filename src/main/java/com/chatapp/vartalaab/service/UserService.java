@@ -53,11 +53,11 @@ public class UserService implements UserDetailsService{
         UserSignUpWrapper userSignUpObj = new UserSignUpWrapper();
         userSignUpObj.setUserSignUpSuccessful(false);
         // does username already taken
-        if(StringUtils.isEmpty(userModel.getUsername())){
+        if(StringUtils.isEmpty(userModel.getUserName())){
             userSignUpObj.setIssue(USERNAME_IS_EMPTY);
             return userSignUpObj;
         } 
-        if(userRepository.existsByUsername(userModel.getUsername())){
+        if(userRepository.existsByUsername(userModel.getUserName())){
             userSignUpObj.setIssue(USERNAME_ALREAD_EXISTS);
             return userSignUpObj;
         }
